@@ -1,0 +1,13 @@
+$DBtn: #0d6efd;
+$containerBG : #e2d5de;
+
+#deleteBtn {
+  background-color: $DBtn;
+  color: white;
+  border-radius: 7px;
+  box-shadow: none;
+}
+
+#container {
+  background-color: $containerBG ;
+}
