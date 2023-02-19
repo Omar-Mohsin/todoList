@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
+import APIHelper from '../../apiHelper'
 
 
 import ToDoItem from "../items/ToDoItem";
@@ -6,11 +7,21 @@ import ToDoItem from "../items/ToDoItem";
 function InputField() {
 
 
-    const url = "http://localhost:3001/task"
+
     const [inputText, setInputText] = useState("")
     const [items, setItems] = useState([])
    
 
+ 
+    useEffect(() => {
+       
+      fetch('http://localhost:3001/')
+      .then(response => response.json())
+      .then(data => setItems(data));
+      }, [])
+    
+      console.log(items)
+      
 
     function onChangeHandler(event) {
         const newValue = event.target.value;
@@ -22,26 +33,15 @@ function InputField() {
     }
 
 
-    const addItem = async(data)=> {
-        setItems(prevValue => {
-            return [...prevValue, inputText]
-        })
-       
-
-       
-        // Send the new todo item to the back-end
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify( inputText )
-        })
-          .then(res => res.json())
-     
-          setInputText("");
-     
-   
+    const addItem = async(e)=> {
+        
+        e.preventDefault()
+        if (!inputText) {
+          alert("please enter something")
+          return
+        }
+        const newItem = await APIHelper.createItem(inputText)
+        setItems([...items, newItem])
     }
 
     const deleteItem = async (id) => {
@@ -60,15 +60,15 @@ function InputField() {
     return (
         <div>
 
-            <div className="d-flex justify-content-center align-items-center mb-4">
+            <div className="d-flex justify-content-center align-items-center mb-4"    >
 
                 <div className="form-outline flex-fill">
 
-                    <input className="form-control form-control-lg" type='text' onChange={onChangeHandler} placeholder='Add Task' value={inputText}></input>
+                    <input className="form-control form-control-lg" name="newItem" type='text' onChange={onChangeHandler} placeholder='Add Task' value={inputText}></input>
 
                 </div>
 
-                <button className="btn btn-primary btn-lg ms-2" onClick={addItem}>Add</button>
+                <button className="btn btn-primary btn-lg ms-2" type="submit" onClick={addItem}>Add</button>
             </div>
             <ul className="list-group mb-0">
                 {
